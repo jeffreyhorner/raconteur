@@ -1,0 +1,9 @@
+This is a first pass at dispatching raconteur apps. Change the paths
+appropriately and add the following to apache:
+
+	REvalOnStartup "RACONTEUR_ROOT='/path_to_raconteur_apps'"
+	<Location /raconteur>
+		SetHandler r-handler
+		RPreserveEnv
+		RFileHandler /path_to_raconteur/rapache_dispatcher.R::dispatch
+	</Location>
