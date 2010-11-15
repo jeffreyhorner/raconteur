@@ -1,0 +1,11 @@
+Package: raconteur
+Type: Package
+Title: Telling Stories with Data
+Version: 1.0
+Date: 2010-10-05
+Author: Jeffrey Horner
+Maintainer: Jeffrey Horner <jeffrey.horner@gmail.com>
+Description: Data Storyteller
+Depends: rapache, sinartra, RJSONIO, RCurl
+License: GPL-3
+LazyLoad: yes
