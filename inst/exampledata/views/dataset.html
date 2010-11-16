@@ -1,0 +1,25 @@
+<html>
+<head>
+<body>
+<h1><%=dataset%></h1>
+<p>Download dataset as <a href="<%=dataset%>.csv">[CSV]</a>, render as <a href="<%=dataset%>.json">[JSON]</a>, or view plot from the example code as <a href="<%=dataset%>.png">[PNG]</a>.</p>
+<h2> Example code </h2>
+<%
+library(tools)
+library(utils)
+pkgpaths <- .find.package('datasets')
+file <- utils:::index.search(dataset, pkgpaths, TRUE)
+if (!length(file)) {
+        cat("no example code")
+} else {
+    con <- textConnection('tf',open='w')
+    tools::Rd2ex(utils:::.getHelpFile(file), con)
+	close(con)
+}
+%>
+<pre>
+<%=paste(tf,collapse='\n')%>
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+Steps to run this example:
+
+1. Start R in the sinatra_example directory
+2. Call source('start.R')
+3. Call start_sinartra('.')
+4. On your machine cruise to http://localhost:8181/
+   and begin

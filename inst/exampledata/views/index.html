@@ -1,0 +1,27 @@
+<html>
+<title> Sinartra Example with JSON and Plot Services </title>
+<head>
+<body>
+<h3> Sinartra Example with JSON and Plot Services </h3>
+<p>
+This example demonstrates sinartra by using the datasets R package. Each dataset is presented below. By clicking on one, you will be able to explore the dataset with a plot or by returning the dataset in its entirety as a JSON object.
+</p>
+<table><tr>
+<% 
+counter <- 0
+numcols <- 6
+for (i in ls('package:datasets')){ 
+	if (counter %% numcols == 0) cat("</tr><tr>")
+%>
+<td>
+<a href="dataset/<%=i%>.html"><%=i%></a>
+[ <a href="dataset/<%=i%>.json">json </a>]
+[ <a href="dataset/<%=i%>.png">png </a>]
+</td>
+<%
+	counter <- counter + 1;
+}
+%>
+</tr></table>
+</body>
+</html>

@@ -1,11 +1,12 @@
 app_path<-function(app){
-	lapply(getOption('raconteur.app_path')
+	found_path <- NULL
+	lapply(getOption('raconteur.app_path'),
 		function(p){
-			if (file.exists(file.path(p,app)))
-				return(file.path(p,app))
+			if (is.null(found_path) && file.exists(file.path(p,app)))
+				found_path <<- file.path(p,app)
 		}
 	)
-	NULL
+	found_path
 }
 
 is_raconteur_app <- function(app){
@@ -87,7 +88,7 @@ rhttpd_dispatch <- function(app=NULL,path=getOption('raconteur.app_path'),port=8
 	} else {
 		# dispatch a collection of apps from path
 		appcache <- list()
-		dispatch_raconteur <- function(path, query ...){
+		dispatch_raconteur <- function(path, query, ...){
 			# First split the uri by "/", first element will always be "".
 			uri <- strsplit(path,"/")[[1]][-1]
 
@@ -140,7 +141,6 @@ rhttpd_dispatch <- function(app=NULL,path=getOption('raconteur.app_path'),port=8
 
 }
 
-rApache_appcache <- list()
 cached_app <- function(app_name){
 	app <- new.env(hash=TRUE)
 	app$path <- app_path(app_name)
@@ -151,31 +151,56 @@ cached_app <- function(app_name){
 	app
 }
 
+rApache_root_url <- function(){
+	if (SERVER$path_info == '')
+		SERVER$uri
+	else 
+		sub(paste(SERVER$path_info,'$',sep=''),'',SERVER$uri)
+}
+
+rApache_app_url <- function(app) paste(rApache_root_url(),app,sep='/')
+
+rApache_splash_screen <- function(msg=NULL){
+	setContentType('text/html')
+	if (!is.null(msg)) cat(msg)
+
+	any_paths <- NULL
+	lapply(getOption('raconteur.app_path'),
+		function(p){
+			if (is.null(any_paths)){
+				cat("<h2>Try one of these apps</h2>")
+				any_paths <<- TRUE
+			}
+			for (i in dir(p)){
+				cat(sprintf('<a href="%s/">%s</a><br>\n',rApache_app_url(i),i))
+			}
+		}
+	)
+	return(OK)
+}
+
+rApache_appcache <- list()
 rApache_handler <- function(){
+	# lame that we have to do this
+	rapache::reset_magic_vars()
 
 	# First split the uri by "/", first element will always be "".
 	uri <- strsplit(SERVER$path_info,"/")[[1]][-1]
 
 	# bad uri
-	if (length(uri) == 0){
-		# TODO: return JSON object of all known apps
-		setContentType("text/plain")
-		cat(paste("URI is",SERVER$path_info))
-		return(OK)
-	}
+	if (length(uri) == 0) return(rApache_splash_screen())
 
 	# First element of uri is app
 	app <- NULL
-	app_name <- uri[1]
+	app_name <- ifelse(length(uri)>0,uri[1],NULL)
 	if (app_name %in% names(rApache_appcache)){
 		app <- rApache_appcache[[app_name]]
 	} else if (is_raconteur_app(app_name)){
 		rApache_appcache[[app_name]] <<- cached_app(app_name)
-		app <- appcache[[app_name]]
+		app <- rApache_appcache[[app_name]]
 	} else {
-		setContentType('text/html')
-		cat("<h3>No app named",app_name,"<h3>\n")
-		return(OK)
+		msg <- sprintf("<h2>Error! No app named %s.</h2>",app_name)
+		return(rApache_splash_screen(msg))
 	}
 
 	oldwd <- setwd(app$path)
@@ -190,7 +215,14 @@ rApache_handler <- function(){
 
 	# Trim /app_name from path_info
 	sinartra_route <- sub(paste('^/',app_name,sep=''),'',SERVER$path_info)
+
+	# Execute route and capture all leaky output to a textConnection
+	con <- textConnection('.captured_output',open='w')
+	sink(con)
 	ret <- app$router$route(sinartra_route, GET)
+	sink()
+	close(con)
+
 	if (is.list(ret)){
 		# Translate Rhttpd response object to rApache response
 		setContentType(ret[['content-type']])
@@ -201,11 +233,17 @@ rApache_handler <- function(){
 			# payload is a file
 			sendBin(readBin(ret$file,'raw',n=file.info(ret$file)$size))
 		} else{
-			sendBin(ret[[1]])
+			capture.output(str(ret),file=stderr())
+			if (is.character(ret[[1]]))
+				cat(ret[[1]])
+			else if (is.raw(ret[[1]]))
+				sendBin(ret[[1]])
 		}
 		return(ifelse(ret[['status code']]==200,OK,ret[['status code']]))
 	} else {
 		# rApache response
+		if (length(.captured_output)>0)
+			cat(paste(paste(.captured_output,collapse="\n"),"\n",sep=""))
 		return(ret)
 	}
 }
