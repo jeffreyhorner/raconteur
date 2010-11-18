@@ -6,12 +6,24 @@ app_path<-function(app){
 				found_path <<- file.path(p,app)
 		}
 	)
-	found_path
+
+	# Maybe app is not found on the raconteur.app_path search path
+	# So we test if app exists on the file system and presume it's
+	# a valid app path.
+	if (is.null(found_path) && file.exists(app))
+		app
+	else
+		found_path
 }
 
 is_raconteur_app <- function(app){
+
+	# First see if app is a dir under getOption(raconteur.app_path)
+	#  If not, see if app is a path in it's own right.
 	path <- app_path(app)
-	if (is.null(path)) return(FALSE)
+	if (is.null(path)) {
+		path <- app
+	}
 
 	if (!file.exists(file.path(path,'routes.R')))
 		return(FALSE)
@@ -26,7 +38,7 @@ is_raconteur_app <- function(app){
 confirm_rhttpd_response <- function(router,path,query){
 	# empty any previous rapache response
 	unlockBinding('.Rhttpd_response',asNamespace('rapache'))
-	rapache:::.Rhttpd_response <- NULL
+	assignInNamespace(".Rhttpd_response", NULL, 'rapache')
 	lockBinding('.Rhttpd_response',asNamespace('rapache'))
 
 	# Execute route and capture all leaky output to a textConnection
@@ -50,7 +62,7 @@ confirm_rhttpd_response <- function(router,path,query){
 		response <- rapache:::.Rhttpd_response
 		response['status code'] <- ret
 		if (is.null(response[[1]]))
-			response[[1]] <- .captured_output # if any
+			response[[1]] <- paste(paste(.captured_output,collapse="\n"),"\n",sep="")
 		response
 	}
 }
@@ -60,13 +72,6 @@ rhttpd_dispatch <- function(app=NULL,path=getOption('raconteur.app_path'),port=8
 	if (is.null(app) && is.null(path))
 		stop("One of app or path must be specified.")
 
-	if (is.null(path)){
-		old_app_path <- getOption('raconteur.app_path')
-		on.exit(options('raconteur.app_path'=old_app_path))
-		options('raconteur.app_path'='.')
-	}
-
-	options(help.ports=port)
 
 	if (!is.null(app)){
 		if (!is_raconteur_app(app)) stop(app,"not a raconteur app!")
@@ -83,12 +88,13 @@ rhttpd_dispatch <- function(app=NULL,path=getOption('raconteur.app_path'),port=8
 				sys.source('routes.R',router_env)
 				router_env$router_mtime <- mtime
 			}
-			confirm_rttpd_response(router_env$router,path,query)
+			confirm_rhttpd_response(router_env$router,path,query)
 		}
 	} else {
 		# dispatch a collection of apps from path
 		appcache <- list()
 		dispatch_raconteur <- function(path, query, ...){
+			cat("Request: uri is ",path,"\n")
 			# First split the uri by "/", first element will always be "".
 			uri <- strsplit(path,"/")[[1]][-1]
 
@@ -122,23 +128,25 @@ rhttpd_dispatch <- function(app=NULL,path=getOption('raconteur.app_path'),port=8
 
 			# Trim /app_name from path_info
 			sinartra_route <- sub(paste('^/',app_name,sep=''),'',path)
-			confirm_rttpd_response(app$router,sinartra_route,query)
+			confirm_rhttpd_response(app$router,sinartra_route,query)
 		}
 	}
-	assignInNamespace("httpd", dispatch_raconteur, "tools")
 
-	# Now start the R help web server with help.start. NOTE that
+	# Now start the R help web server. NOTE that
 	# this merges with the R console's REPL loop, so if you shut
 	# down R, you're shutting down the web server too.
-	if (tools:::httpdPort == 0L) {
-		help.start()
-			#options("help_type" = "html")
-	}
+	# Already running when httpdPort non zero. Stop/Start if our
+	# port is different than what we want.
+	assignInNamespace("httpd", dispatch_raconteur, "tools")
+	options(help.ports=port)
+	if (tools:::httpdPort != port && tools:::httpdPort != 0L)
+		tools:::startDynamicHelp(start=FALSE)
+	tools:::startDynamicHelp()
 
-	cat('port is ',tools:::httpdPort,'\n')
-
-	return(invisible(router_env$router))
-
+	if (!is.null(app))
+		invisible(router_env$router)
+	else
+		invisible(appcache)
 }
 
 cached_app <- function(app_name){

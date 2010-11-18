@@ -6,7 +6,6 @@ Date: 2010-10-05
 Author: Jeffrey Horner
 Maintainer: Jeffrey Horner <jeffrey.horner@gmail.com>
 Description: Data Storyteller
-Imports: rapache
-Depends: rapache, sinartra, RJSONIO, RCurl
+Depends: rapache, sinartra, RJSONIO, RCurl, tools
 License: GPL-3
 LazyLoad: yes
