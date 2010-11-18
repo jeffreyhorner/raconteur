@@ -36,10 +36,14 @@ is_raconteur_app <- function(app){
 }
 
 confirm_rhttpd_response <- function(router,path,query){
+
 	# empty any previous rapache response
-	unlockBinding('.Rhttpd_response',asNamespace('rapache'))
-	assignInNamespace(".Rhttpd_response", NULL, 'rapache')
-	lockBinding('.Rhttpd_response',asNamespace('rapache'))
+	rapache::reset_magic_vars()
+
+	# need a better interface than this
+	unlockBinding('GET',asNamespace('rapache'))
+	assignInNamespace('GET', query, 'rapache')
+	lockBinding('GET',asNamespace('rapache'))
 
 	# Execute route and capture all leaky output to a textConnection
 	con <- textConnection('.captured_output',open='w')
