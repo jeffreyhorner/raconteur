@@ -7,3 +7,18 @@ appropriately and add the following to apache:
 		RPreserveEnv
 		RFileHandler /path_to_raconteur/rapache_dispatcher.R::dispatch
 	</Location>
+
+
+Application Skeleton Examples
+
+  # Short Example
+  p <- function(start, finish){
+    start:finish
+  }
+
+  app.skeleton(p)
+
+
+
+  # Full Example
+  app.skeleton(app.skeleton)
