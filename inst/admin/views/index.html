@@ -1,0 +1,12 @@
+<html>
+<body>
+<h1>Welcome to Raconteur!</h1>
+<h2>List of applications </h2>
+<% for (i in getOption('raconteur.app_path')){ %>
+<h3>Path: <%=i%></h3><p>
+<% for (j in dir(i)){ %>
+	<a href="<%=rApache_root_url()%>/<%=j%>/"><%=j%></a>
+<% }} %>
+<p>
+</body>
+</html>
