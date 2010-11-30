@@ -5,7 +5,15 @@ router$get("/index.html", function(...) {
 })
 
 router$get("/upload", function(...) {
-	
-	# brews the file index.html in the /views dir
-	render_brew("upload",list(...))
+	setContentType("text/plain")
+	if (!is.null(POST)){
+		cat("POST variable is... \n")
+		str(POST)
+	}
+	if (!is.null(FILES)){
+		str(FILES)
+	} else {
+		cat("No App Uploaded!\n")
+	}
+	OK	
 })

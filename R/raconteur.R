@@ -11,22 +11,35 @@ app_name<-function(app){
 		NULL
 	}
 }
+
+#' Goal is to return as best as possible an absolute file path.
+#' 
+#' @param app name or directory
 app_path<-function(app){
 	found_path <- NULL
-	lapply(getOption('raconteur.app_path'),
-		function(p){
-			if (is.null(found_path) && file.exists(file.path(p,app)))
-				found_path <<- file.path(p,app)
+ 
+	# Looking for a directory if we see special path characters
+	if (grepl(paste('[',.Platform$file.sep,'.',']',sep=''),app)){
+		if (file.exists(app)){
+			oldwd <- setwd(app)
+			found_path <- getwd()
+			setwd(oldwd)
+		} else {
+			warning("No path found for app")
 		}
-	)
 
-	# Maybe app is not found on the raconteur.app_path search path
-	# So we test if app exists on the file system and presume it's
-	# a valid app path.
-	if (is.null(found_path) && file.exists(app))
-		app
-	else
-		found_path
+	# Otherwise look on raconteur.app_path
+	} else {
+		lapply(getOption('raconteur.app_path'),
+			function(p){
+				if (is.null(found_path) && file.exists(file.path(p,app)))
+					found_path <<- file.path(p,app)
+			}
+		)
+		if (is.null(found_path)) warning("No path found for app")
+	}
+
+	found_path
 }
 
 is_raconteur_app <- function(app){
@@ -60,5 +73,13 @@ create_cached_app <- function(appname){
 }
 
 upload_app <- function(url=NULL,app){
-	path <- app_path(app)
+	if (!is_raconteur_app(app)){
+		stop(app," not a raconteur app!")
+	}
+	apppath <- app_path(app)
+	appname <- app_name(app)
+	tarfile <- paste(tempfile(),appname,'tgz',sep='.')
+	tar(tarfile,apppath,compression='gzip')
+	postForm(url,app=fileUpload(tarfile))
+	on.exit(unlink(tarfile))
 }
