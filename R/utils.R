@@ -87,3 +87,24 @@ get_function <- function(func_c) {
 print_line <- function(..., file_path, append = TRUE) {
 	cat(..., "\n", file = file_path, append = append)
 }
+
+
+#' Make a Drop Down Menu
+#'
+#' @param l list with one item and a collection inside
+#' @examples html_drop_down(list(listTitle = c("A", "B", "C")))
+html_drop_down <- function(l, displayName = TRUE) {
+	options <- stringr::str_c("<option value=\"", l[[1]], "\">", l[[1]], "</option>", collapse = "\n")
+	dd <- stringr::str_c("<select id=\"", names(l)[1],"\" name=\"", names(l)[1],"\">", options, "</select>", collapse = "")
+	
+	if(identical(displayName, TRUE)) {
+		stringr::str_c(names(l)[1], " ", dd)
+	} else {
+		dd
+	}
+}
+
+
+
+
+

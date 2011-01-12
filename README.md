@@ -15,6 +15,12 @@ on users' local machines and then uploaded to the server. There is a
 Raconteur root URL (ROOT_URL), and every app is located on the root url
 at http://ROOT_URL/app.
 
+Install
+=======
+
+sudo ./inst/install_rapache.sh
+
+
 Setup
 =====
 
@@ -40,6 +46,10 @@ appropriately and add the following to apache:
 		RPreserveEnv
 		RFileHandler /path_to_raconteur/rapache_dispatcher.R::dispatch
 	</Location>
+	
+OR
+
+copy the apache-config-file to 000-index in your apache folder
 
 
 Application Skeleton Examples

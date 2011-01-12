@@ -1,0 +1,33 @@
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /var/www
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride None
+        </Directory>
+        <Directory /var/www/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog /var/log/apache2/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel debug
+
+        CustomLog /var/log/apache2/access.log combined
+
+    REvalOnStartup "options('raconteur.app_path'='/var/raconteur')"
+    REvalOnStartup "options('raconteur.admin_app'='/usr/lib/R/site-library/raconteur/admin')"
+    REvalOnStartup "options('raconteur.root_url'='/raconteur')"
+    REvalOnStartup "options(brew.chdir=TRUE)"
+    <Location /raconteur>
+        SetHandler r-handler
+        RHandler raconteur::rApache_handler
+    </Location>
+
+</VirtualHost>

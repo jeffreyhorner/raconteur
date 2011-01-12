@@ -135,10 +135,21 @@ make_routes <- function(path, func_c) {
 	print_line("	render_brew(\"output\",list(header = \"Source\", output = output))", file_path = file_path)
 	print_line("})", file_path = file_path)
 	print_line("", file_path = file_path)
+
+	print_line("", file_path = file_path);print_line("", file_path = file_path)
+	
+	print_line("# load_html(\"/\",func_c,\"/interaction\")", file_path = file_path)
+	print_line("# PLEASE EDIT THE FILE BELOW!!!!", file_path = file_path)
+	print_line("# View Interactions", file_path = file_path)
+	print_line("router$get(\"/:func/interaction\", function(func, query, ...) {", file_path = file_path)
+	print_line("	# brews the file interaction.html in the /views dir", file_path = file_path)
+	print_line("	render_brew(\"interaction\",list(header = \"Interaction\", output = output))", file_path = file_path)
+	print_line("})", file_path = file_path)
+	print_line("", file_path = file_path)
 }
 
 
-make_view <- function(path) {
+make_view_output <- function(path) {
 	
 	file_path <- file.path(path, "output.html")
 	
@@ -150,6 +161,51 @@ make_view <- function(path) {
 	print_line("<head>", file_path = file_path)
 	print_line("  <title><%= header %></title>", file_path = file_path)
 	print_line("</head>", file_path = file_path)
+	print_line("<body>", file_path = file_path)
+	print_line("	<%= output %>", file_path = file_path)
+	print_line("</body>", file_path = file_path)
+	print_line("</html>", file_path = file_path)
+	
+}
+
+make_view_interaction <- function(path, func_c) {
+	
+	file_path <- file.path(path, "output.html")
+	
+	print_line("", file_path = file_path, append = FALSE)
+	
+	
+	print_line("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">", file_path = file_path)
+	print_line("<html xmlns=\"http://www.w3.org/1999/xhtml\">", file_path = file_path)
+	print_line("<head>", file_path = file_path)
+	print_line("  <title><%= header %></title>", file_path = file_path)
+	print_line("</head>", file_path = file_path)
+	print_line("<script type=\"text/javascript\" src=\"http://code.jquery.com/jquery-latest.min.js\">", file_path = file_path)
+	<script type="text/javascript">
+	
+		$(document).ready(function() {
+			
+		});
+		
+		execute_, func_c,(){
+			
+			$.ajax({
+			    url: 'document.xml',
+			    type: 'GET',
+			    dataType: 'xml',
+			    timeout: 1000,
+			    error: function(){
+			        alert('Error loading XML document');
+			    },
+			    success: function(xml){
+			        // do something with xml
+			    }
+			});
+		}
+	
+	</script>
+	
+	
 	print_line("<body>", file_path = file_path)
 	print_line("	<%= output %>", file_path = file_path)
 	print_line("</body>", file_path = file_path)
@@ -182,7 +238,8 @@ app.skeleton <- function(func, overwrite = TRUE) {
 	make_app_dir(file.path(base_dir, "views"))
 	
 	# Create output view
-	make_view(file.path(base_dir, "views"))
+	make_view_output(file.path(base_dir, "views"))
+	# make_view_interaction(file.path(base_dir, "views"))
 	
 	invisible(func)
 }
