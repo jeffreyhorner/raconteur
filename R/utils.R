@@ -23,7 +23,13 @@ load_html <- function(...) {
 #' @param name name of wanted directory
 #' @param overwrite boolean determining if the name should be appended
 valid_directory <- function(name, overwrite) {
+	
 	base_dir <- name
+	rac_path <- options()$raconteur.app_path
+	if(!is.null(rac_path)) {
+		base_dir <- file.path(rac_path, name)
+	}
+	
 	if(!overwrite) {
 		folder_items <- dir()
 		count <- 1
