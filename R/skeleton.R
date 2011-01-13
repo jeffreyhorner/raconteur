@@ -108,7 +108,13 @@ is_user_function <- function(func_c) {
 make_routes <- function(path, func_c) {
 	file_path <- file.path(path, "routes.R")
 	
-	print_line("# routes.R - contains two default routes", file_path = file_path, append = FALSE)
+	pre_path <- ""
+	app_path <- options()$raconteur.app_path
+	if(!is.null(app_path))
+		pre_path <- stringr::str_c(app_path, "/")
+	
+	print_line("source(\"", pre_path, func_c,".R\")", file_path = file_path, append = FALSE)
+	print_line("# routes.R - contains two default routes", file_path = file_path)
 	print_line("# 1. execute function - htmlpath/myFunc?arg1=\"A\"&arg2=5", file_path = file_path)
 	print_line("# 2. view source of function - htmlpath/myFunc/source", file_path = file_path)
 	

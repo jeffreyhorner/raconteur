@@ -6,6 +6,6 @@ Date: 2010-10-05
 Author: Jeffrey Horner and Barret Schloerke
 Maintainer: Jeffrey Horner <jeffrey.horner@gmail.com>
 Description: Data Storyteller
-Depends: rapache, sinartra, RJSONIO, RCurl, tools, parser, utils
+Depends: rapache, sinartra, RJSONIO, RCurl, tools, parser, utils, stringr
 License: GPL-3
 LazyLoad: yes
