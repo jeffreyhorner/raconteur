@@ -113,7 +113,7 @@ make_routes <- function(path, func_c) {
 	if(!is.null(app_path))
 		pre_path <- stringr::str_c(app_path, "/")
 	
-	print_line("source(\"", pre_path, func_c,".R\")", file_path = file_path, append = FALSE)
+	print_line("source(\"", pre_path, func_c,".R\")", sep = "", file_path = file_path, append = FALSE)
 	print_line("# routes.R - contains two default routes", file_path = file_path)
 	print_line("# 1. execute function - htmlpath/myFunc?arg1=\"A\"&arg2=5", file_path = file_path)
 	print_line("# 2. view source of function - htmlpath/myFunc/source", file_path = file_path)
