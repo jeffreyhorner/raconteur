@@ -85,7 +85,7 @@ start_sinartra <- function(app_path=getwd(),port=8181) {
 	# down R, you're shutting down the web server too.
 	if (tools:::httpdPort == 0L) {
 		help.start()
-			#options("help_type" = "html")
+		options("help_type" = "html")
 	}
 
 	cat('port is ',tools:::httpdPort,'\n')

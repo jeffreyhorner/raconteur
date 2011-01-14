@@ -1,10 +1,9 @@
-library(sinartra)
 library(RJSONIO)
 library(RCurl)
 library(tools)
 library(parser)
 library(utils)
-library(evaluate)
+library(sinartra)
 
 
 
@@ -18,3 +17,6 @@ PATH <- dirname(FILE)
 # if (!exists("flea")) load(file.path(PATH, "data", "flea.rda"))
 
 lapply(dir(file.path(PATH, "R"), full.name=TRUE), source)
+
+if(tools:::httpdPort == 0L)
+	tools::startDynamicHelp()

@@ -1,3 +1,12 @@
+#' Base html path needed to load a website.
+#' 
+#' @param ... site to be loaded
+#' @author Barret Schloerke \email{schloerke@@gmail.com}
+#' @keywords internal
+base_html_path <- function() {
+  str_c("http://127.0.0.1:", tools:::httpdPort, collapse = "")
+}
+
 #' Load an html page from the console.
 #' 
 #' @param ... site to be loaded
@@ -109,7 +118,6 @@ html_drop_down <- function(l, displayName = TRUE) {
 		dd
 	}
 }
-
 
 
 
