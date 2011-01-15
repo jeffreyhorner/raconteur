@@ -24,11 +24,13 @@ app.skeleton <- function(func, overwrite = TRUE) {
 	# Create README
 	make_index_html(base_dir)
 	
-	# Save functions to file
-	make_function_file(base_dir, func_c, func)
-	
+
 	# Create route to main function
 	make_routes_r(base_dir, func_c)
+
+	# Save functions to file	
+	add_functions_to_routes_r(base_dir, func_c, func)
+	
 	
 	# Create the views dir
 	make_app_dir(file.path(base_dir, "views"))

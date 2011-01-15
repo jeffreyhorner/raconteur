@@ -1,10 +1,10 @@
 #' Make Function File
 #' Make a file for the functions to be housed in.
-make_function_file <- function(base_dir, func_c, fun) {
-
-	# Make file
-	file_path <- file.path(base_dir, str_c(func_c, ".R"))
-
+add_functions_to_routes_r <- function(path, func_c, fun) {
+	
+	# Make file path
+	file_path <- file.path(path, "routes.R")
+	
 	# Save original function
 	func_body <- body_text(func_c)
 	cat(func_body, file = file_path)
