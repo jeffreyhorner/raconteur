@@ -1,6 +1,5 @@
 #' Base html path needed to load a website.
 #' 
-#' @param ... site to be loaded
 #' @author Barret Schloerke \email{schloerke@@gmail.com}
 #' @keywords internal
 base_html_path <- function() {
@@ -69,8 +68,6 @@ body_text <- function(func_c) {
 }
 
 
-
-
 #' Get Function Body
 #' 
 #' @param func_c character form of the function
@@ -101,6 +98,14 @@ get_function <- function(func_c) {
 #' @param append boolen to append file or overwrite file
 print_line <- function(..., file_path, append = TRUE) {
 	cat(..., "\n", file = file_path, append = append)
+}
+
+
+#' Temporary File with an Extension
+#'
+#' @param ext extension to be used
+tempfileWithExtension <- function(ext = "png") { 
+	str_c(tempfile(), ".", ext)
 }
 
 
