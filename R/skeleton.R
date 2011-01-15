@@ -25,11 +25,15 @@ app.skeleton <- function(func, overwrite = TRUE) {
 	make_index_html(base_dir)
 	
 
+	# Create/Clear Route File
+	routes_path <- file.path(path, "routes.R")
+	print_line("", file_path = routes_path, append = FALSE)
+	
 	# Create route to main function
-	make_routes_r(base_dir, func_c)
+	make_routes_r(routes_path, func_c)
 
 	# Save functions to file	
-	add_functions_to_routes_r(base_dir, func_c, func)
+	add_functions_to_routes_r(routes_path, func_c, func)
 	
 	
 	# Create the views dir
