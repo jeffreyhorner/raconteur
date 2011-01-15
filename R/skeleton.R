@@ -22,7 +22,7 @@ app.skeleton <- function(func, overwrite = TRUE) {
 	make_app_dir(base_dir)
 		
 	# Create README
-	make_readme(base_dir)
+	make_index_html(base_dir)
 	
 	# Save functions to file
 	make_function_file(base_dir, func_c, func)
