@@ -130,7 +130,7 @@ dataset_example_pic <- function(dataset) {
 		return(render_brew("error",list(dataset=dataset)))
 
 	t <- paste(tempfile(), ".png", sep = "", collapse = "")
-	cat('tempfile is',t,'\n',file=stderr())
+	# cat('tempfile is',t,'\n',file=stderr())
 	png(t)
 		
 		# This is a bit of magic. R has an example function
@@ -142,11 +142,13 @@ dataset_example_pic <- function(dataset) {
 		#
 		# This is where you would place your own data and plot routines, FYI
 		#
-		suppressWarnings(
-			eval(
-				substitute(
-					example(dataset,package='datasets',ask=FALSE),
-					list(dataset=dataset)
+		capture.output(
+			suppressWarnings(
+				eval(
+					substitute(
+						example(dataset,package='datasets',ask=FALSE),
+						list(dataset=dataset)
+					)
 				)
 			)
 		)
@@ -170,7 +172,7 @@ dataset_example_pic_or_rando <- function(dataset) {
 router$get('/dataset/:dataset.png', function(dataset){
 	fileName <- dataset_example_pic_or_rando(dataset)
 	
-	print(fileName)
+	# print(fileName)
 	static_file(fileName, remove = TRUE)
 })
 
