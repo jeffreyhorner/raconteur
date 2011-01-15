@@ -1,0 +1,32 @@
+<html>
+<head>
+<body>
+<h1><%=dataset%></h1>
+
+<table width = "100%">
+  <tr>
+    <td valign="top">
+      <h2> Example code </h2>
+      <pre><%= example_code%></pre>
+    </td>
+    
+
+    <% if(has_image) {-%>
+      <td valign="top">
+        <h2> Example Picture </h2>
+        <a href="/dataset/<%=dataset%>.png"><img src="/dataset/<%=dataset%>.png" alt="<%=dataset%> png file" /></a>
+      </td>
+    <% } %>
+  </tr>
+</table>
+
+<h2> Data </h2>
+<p>Download dataset as <a href="/dataset/<%=dataset%>.csv">[CSV]</a> or rendered as <a href="/dataset/<%=dataset%>.json">[JSON]</a>.</p>
+<h3> JSON <h3>
+  <iframe src ="/dataset/<%=dataset%>.json" width="100%" height="600">
+    <p>Your browser does not support iframes. :-(</p>
+  </iframe>
+
+
+</body>
+</html>
