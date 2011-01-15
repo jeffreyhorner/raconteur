@@ -68,11 +68,14 @@ rApache_handler <- function(){
 	# Execute route and capture all leaky output to a textConnection
 	con <- textConnection('.captured_output',open='w')
 	sink(con)
-	ret <- app$router$route(sinartra_route, GET)
+	ret <- try(app$router$route(sinartra_route, GET))
 	sink()
 	close(con)
 
-	if (is.list(ret)){
+	if (inherits(ret,'try-error')){
+		cat('rApache_handler returned a "try-error"\n',file=stderr())
+		cat(ret,"\n",file=stderr())
+	} else if (is.list(ret)){
 		# Translate Rhttpd response object to rApache response
 		setContentType(ret[['content-type']])
 		if (!is.null(ret$headers)){
@@ -89,6 +92,9 @@ rApache_handler <- function(){
 				sendBin(ret[[1]])
 		}
 		return(ifelse(ret[['status code']]==200,OK,ret[['status code']]))
+	} else if (is.character(ret) && grepl('^ERROR:',ret[1])) {
+		cat('sinartra returned an ERROR:\n',file=stderr())
+		cat(ret,"\n",file=stderr())
 	} else {
 		# rApache response
 		if (length(.captured_output)>0)
