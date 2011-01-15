@@ -5,14 +5,7 @@
 #' @param func_c character form of the function to be in main route
 make_routes_r <- function(path, func_c) {
 	file_path <- file.path(path, "routes.R")
-	
-	app_path <- options()$raconteur.app_path
-	if(!is.null(app_path)) { #installed in box
-		print_line("source(\"", app_path, "/", func_c, "/", func_c,".R\")", sep = "", file_path = file_path, append = FALSE)
-	} else { #personal computer
-		print_line("source(\"", func_c,".R\")", sep = "", file_path = file_path, append = FALSE)
-	}
-	
+		
 	print_line("# routes.R - contains two default routes", file_path = file_path)
 	print_line("# 1. execute function - htmlpath/myFunc?arg1=\"A\"&arg2=5", file_path = file_path)
 	print_line("# 2. view source of function - htmlpath/myFunc/source", file_path = file_path)
