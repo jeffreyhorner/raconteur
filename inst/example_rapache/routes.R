@@ -95,7 +95,7 @@ router$get('/dataset/:dataset.json', function(dataset){
 
 # Returned when no dataset's example renders a plot
 bad_plot <- function(dataset){
-    t <- tempfile('png')
+    t <- tempfileWithExtension()
     png(t)
     #par(mar=rep(0,4))
     plot(rnorm(100),main=paste('Fail for',dataset,' but Check it!'),col=rainbow(100,alpha=runif(100,0,1)),pch='.',cex=c(2,3,4,5,10,50,100))
@@ -112,7 +112,7 @@ router$get('/dataset/:dataset.png', function(dataset){
 
 	setContentType('image/png')
 
-	t <- tempfile('png')
+	t <- tempfileWithExtension()
 	#cat('tempfile is',t,'\n')
 	png(t)
 

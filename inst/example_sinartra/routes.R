@@ -9,7 +9,7 @@ library(datasets)
 
 # Returned when no dataset's example renders a plot
 rando_plot <- function(dataset){
-	t <- paste(tempfile(), ".png", sep = "", collapse = "")
+	t <- tempfileWithExtension()
 	png(t)
 	#par(mar=rep(0,4))
 	plot( rnorm(100), main = paste('Cool Random Plot!'), col = rainbow(100, alpha = runif(100, 0, 1)), pch = '.', cex = c(2, 3, 4, 5, 10, 50, 100))
@@ -129,7 +129,7 @@ dataset_example_pic <- function(dataset) {
 	if (!any(ls('package:datasets') == dataset))
 		return(render_brew("error",list(dataset=dataset)))
 
-	t <- paste(tempfile(), ".png", sep = "", collapse = "")
+	t <- tempfileWithExtension()
 	# cat('tempfile is',t,'\n',file=stderr())
 	png(t)
 		

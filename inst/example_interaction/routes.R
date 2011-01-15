@@ -7,7 +7,7 @@
 # Returned when no dataset's example renders a plot
 rando_plot <- function(count = 100){
 	# cat("starting rando plot\n", file = stderr())
-	t <- paste(tempfile(), ".png", sep = "", collapse = "")
+	t <- tempfileWithExtension()
 
 	# cat("starting png dev on file: ", t, "\n", file = stderr())
 	png(t)
