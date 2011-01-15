@@ -1,0 +1,46 @@
+<html>
+<head>
+<title> Sinartra Example with JSON and Plot Services </title>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+
+<script type="text/javascript" >
+  
+  function refresh_pic(newCount) {
+    
+    if(newCount == ""){ 
+      newCount = "100";
+    }
+    
+    s = "rando.png?count="+newCount;
+    
+    $("#pic_link").attr("href", s);
+    $("#pic_img").attr("src", s);
+    
+    return false;
+  }
+  
+</script>
+
+
+
+</head>
+<body>
+<h1> Refresh Picture Example </h1>
+<p>
+Change the value of the count input box to change the picture below.
+</p>
+<br />
+<br />
+<br />
+
+<h3>Count</h3>
+<form  onsubmit="return false;"><input type="text" id="count_box" name="count_box" onchange="refresh_pic(this.value); false;" value="100"/><form>
+  <br />
+<a id="pic_link" href="rando.png?count=100"><img id="pic_img" src="rando.png?count=100" alt="Rando Pic" /></a>
+
+
+
+</body>
+</html>
+
