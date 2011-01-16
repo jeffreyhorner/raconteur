@@ -57,7 +57,11 @@ valid_directory <- function(name, overwrite) {
 #' @author Barret Schloerke \email{schloerke@@gmail.con} and Hadley Wickham
 #' @keywords internal
 body_text <- function(func_c) {
-	print(func_c)
+	# print(func_c)
+	if(missing(func_c)){
+		stop("Please supply a function name")
+	}
+	
 	text <- get_function(func_c)
 	
 	if (is.null(text)) {
@@ -72,20 +76,20 @@ body_text <- function(func_c) {
 #' 
 #' @param func_c character form of the function
 get_function <- function(func_c) {
-	val <- tryCatch(
+	tryCatch(
 		get(func_c, mode = "function"),
 		error = function(e) {
-			"error"
-		}
-	)
-
-	if(!identical(val, "error"))
-		return(val)
-	
-	tryCatch(
-		get(func_c, envir = globalenv()),
-		error = function(e) {
-			NULL
+			tryCatch(
+				get(func_c, envir = globalenv()),
+				error = function(e) {
+					tryCatch(
+						get(func_c),
+						error = function(e) {
+							NULL
+						}
+					)
+				}
+			)
 		}
 	)
 }
@@ -125,5 +129,8 @@ html_drop_down <- function(l, displayName = TRUE) {
 }
 
 
-
+append_vector <- function(vect, val){
+	vect[length(vect) + 1] <- val
+	vect
+}
 

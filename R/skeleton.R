@@ -24,7 +24,6 @@ app.skeleton <- function(func, overwrite = TRUE) {
 	# Create README
 	make_index_html(base_dir)
 	
-
 	# Create/Clear Route File
 	routes_path <- file.path(path, "routes.R")
 	print_line("", file_path = routes_path, append = FALSE)
@@ -34,7 +33,6 @@ app.skeleton <- function(func, overwrite = TRUE) {
 
 	# Save functions to file	
 	add_functions_to_routes_r(routes_path, func_c, func)
-	
 	
 	# Create the views dir
 	make_app_dir(file.path(base_dir, "views"))
