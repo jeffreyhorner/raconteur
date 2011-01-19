@@ -23,9 +23,8 @@ router$get(\"/index.html\", function(...) {
 # Execute Function
 router$get(\"/eval/:func\", function(func, query, ...) {
 	
-	output <- eval_func_with_query(func, query)
+	output <- eval(parse(text = func_string_with_query(func_c = func, query = query)))
 	
-	cat(\"making call: \", call, file = stderr())
 	cat(\"output: \", output, file = stderr())
 	# brews the file output.html in the /views dir
 	render_brew(\"output\",list(header = \"Output\", output = output))
@@ -48,7 +47,7 @@ router$get(\"/pic/:func\", function(func, query, ...) {
 
 	f <- tempfileWithExtension(\"png\")
 	png(f)
-	  eval_func_with_query(func, query)
+	  eval(parse(text = func_string_with_query(func_c = func, query = query)))
 	dev.off()
 	
 	# brews the file output.html in the /views dir
@@ -60,7 +59,7 @@ router$get(\"/pic/:func\", function(func, query, ...) {
 # Execute Function
 router$get(\"/json/:func\", function(func, query, ...) {
 	
-	output <- eval_func_with_query(func, query)
+	output <- eval(parse(text = func_string_with_query(func_c = func, query = query)))
 	
 	# brews the file output.html in the /views dir
 	raconteur_render_json(output)
@@ -71,7 +70,7 @@ router$get(\"/json/:func\", function(func, query, ...) {
 # Execute Function
 router$get(\"/js/:var_name/:func\", function(var_name, func, query, ...) {
 	
-	output <- eval_func_with_query(func, query)
+	output <- eval(parse(text = func_string_with_query(func_c = func, query = query)))
 	
 	# brews the file output.html in the /views dir
 	raconteur_render_javascript(var_name, output)
