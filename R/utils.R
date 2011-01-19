@@ -150,14 +150,18 @@ check_pkg_and_load <- function(...) {
 }
 
 
-eval_text <- function(txt, ...) {
+func_string_with_query <- function(func_c, query) {
 	if(missing(query))
-		call <- str_c(func, "()")
+		str_c(func_c, "()")
 	else
-		call <- str_c(func, "(",str_c(names(query), str_c("\"", query, "\""), sep = " = ", collapse = ", ") ,")")
-
-	output <- eval(parse(text = call))
-	
+		str_c(func_c, "(",str_c(names(query), str_c(query), sep = " = ", collapse = ", ") ,")")
 }
 
+eval_text <- function(txt, ...) {
+	eval(parse(text = txt, ...))
+}
+
+eval_func_with_query <- function(func_c, query = c(), ...) {
+	eval_text(txt = func_string_with_query(func_c = func_c, query = query), ...)
+}
 

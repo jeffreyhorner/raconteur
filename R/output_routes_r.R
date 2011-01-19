@@ -23,11 +23,7 @@ router$get(\"/index.html\", function(...) {
 # Execute Function
 router$get(\"/eval/:func\", function(func, query, ...) {
 	
-	if(missing(query))
-		call <- str_c(func, \"()\")
-	else
-		call <- str_c(func, \"(\",str_c(names(query), str_c(\"\\\"\", query, \"\\\"\"), sep = \" = \", collapse = \", \") ,\")\")
-	output <- eval(parse(text = call))
+	output <- eval_func_with_query(func, query)
 	
 	cat(\"making call: \", call, file = stderr())
 	cat(\"output: \", output, file = stderr())
@@ -49,20 +45,44 @@ router$get(\"/source/:func\", function(func, query, ...) {
 # load_html(fun_to_url(",func_c,", url = \"/pic/\")
 # View Picture
 router$get(\"/pic/:func\", function(func, query, ...) {
-	output <- body_text(func)
-	
-	if(missing(query))
-		call <- str_c(func, \"()\")
-	else
-		call <- str_c(func, \"(\",str_c(names(query), str_c(\"\\\"\", query, \"\\\"\"), sep = \" = \", collapse = \", \") ,\")\")
-	
+
 	f <- tempfileWithExtension(\"png\")
 	png(f)
-	  eval(parse(text = call))
+	  eval_func_with_query(func, query)
 	dev.off()
 	
 	# brews the file output.html in the /views dir
 	static_file(f, remove = TRUE)
+})
+
+
+# load_html(fun_to_url(", func_c, ", url = \"/json/\")
+# Execute Function
+router$get(\"/json/:func\", function(func, query, ...) {
+	
+	output <- eval_func_with_query(func, query)
+	
+	# brews the file output.html in the /views dir
+	raconteur_render_json(output)
+})
+
+
+# load_html(fun_to_url(", func_c, ", url = \"/js/howdy/\")
+# Execute Function
+router$get(\"/js/:var_name/:func\", function(var_name, func, query, ...) {
+	
+	output <- eval_func_with_query(func, query)
+	
+	# brews the file output.html in the /views dir
+	raconteur_render_javascript(var_name, output)
+})
+
+
+# load_html(\"/file/routes.R\")
+# Evaluate the function and make a Javascript Version
+router$get(\"/file/*\", function(splat, ...) {
+	# displays the file \"splat\"
+	static_file(splat)
 })
 
 

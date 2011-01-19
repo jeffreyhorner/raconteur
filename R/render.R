@@ -1,7 +1,4 @@
-# Convenience function to render an R object to JSON
-# Supposed to be part of sinartra, but not yet.
-render_json <- function(object) {
-
+raconteur_toJSON <- function(object) {
 	# Some objects are instances of a sub-class of data.frame
 	# and RJSONIO doesn't know what to do with them, so we just
 	# use trickery.
@@ -29,10 +26,25 @@ render_json <- function(object) {
 		object <- as.data.frame(object)
 	}
 
-	setContentType('application/json')
-	cat(toJSON(object))
-	OK
+	toJSON(object)
 }
+
+# Convenience function to render an R object to JSON
+# Supposed to be part of sinartra, but not yet.
+raconteur_render_json <- function(object) {
+	sinartra:::render(raconteur_toJSON(object), mime_type = "application/json")
+}
+
+raconteur_render_javascript <- function(var_name, object) {
+	# Yes, 'text/javascript is "obsolete" according to wikipedia, 
+	# but it has more support than 'application/javascrip'
+	# .... "Defined in RFC 4329 but not accepted in IE 8 or earlier"
+	
+	payday <- str_c("var ", var_name, " = ", raconteur_toJSON(object), ";")
+	
+	sinartra:::render(payday, mime_type = "text/javascript")
+}
+
 
 
 
