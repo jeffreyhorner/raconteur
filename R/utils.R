@@ -154,7 +154,7 @@ func_string_with_query <- function(func_c, query) {
 	if(missing(query))
 		str_c(func_c, "()")
 	else
-		str_c(func_c, "(",str_c(names(query), str_c(query), sep = " = ", collapse = ", ") ,")")
+		str_c(func_c, "(",str_c(names(query), str_c(as.vector(query)), sep = " = ", collapse = ", ") ,")")
 }
 
 eval_text <- function(txt, ...) {
