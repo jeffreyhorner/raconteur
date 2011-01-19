@@ -9,46 +9,71 @@ make_routes_r <- function(file_path, func_c) {
 # 1. execute function - htmlpath/myFunc?arg1=\"A\"&arg2=5
 # 2. view source of function - htmlpath/myFunc/source
 
+router$get(\"/doc/html/index.html\", function() {redirect(\"/\")})
+router$get(\"/\", function() {redirect(\"index.html\")})
 
-# load_html(\"/\",func_c,\"?arg1=foo&arg2=bar\")
+# View the interaction \"index.html\" page
+router$get(\"/index.html\", function(...) {
+        # brews the file index.html in the /views dir
+        render_brew(\"index\",list(...))
+})
+
+
+# load_html(fun_to_url(",func_c,", url = \"/eval/\")
 # Execute Function
-router$get(\"/\", function() {", file_path = file_path)
-		temp_path <- str_c("/",func_c,"?arg1=foo&arg2=bar")
-	print_line("	redirect(\"",temp_path,"\")", sep="", file_path = file_path)
-	print_line("})
+router$get(\"/eval/:func\", function(func, query, ...) {
 	
-
-# load_html(\"/\",func_c,\"?arg1=foo&arg2=bar\")
-# Execute Function
-router$get(\"/:func\", function(func, query, ...) {
-	if(!is.missing(arg1) && !is.missing(arg2))
-		if(identical(arg1, \"foo\") && identical(arg2, \"bar\"))
-			redirect(\"tutorial.html\")
-
-	call <- str_c(func, \"(\",str_c(names(query), str_c(\"\\\"\", query, \"\\\"\"), sep = \" = \", collapse = \", \") ,\")\")
+	if(missing(query))
+		call <- str_c(func, \"()\")
+	else
+		call <- str_c(func, \"(\",str_c(names(query), str_c(\"\\\"\", query, \"\\\"\"), sep = \" = \", collapse = \", \") ,\")\")
 	output <- eval(parse(text = call))
 	
+	cat(\"making call: \", call, file = stderr())
+	cat(\"output: \", output, file = stderr())
 	# brews the file output.html in the /views dir
 	render_brew(\"output\",list(header = \"Output\", output = output))
 })
 
 
-# load_html(\"/\",func_c,\"/source\")
+# load_html(str_c(\"/source/\", ", func_c,"))
 # View Source
-router$get(\"/:func/source\", function(func, query, ...) {
+router$get(\"/source/:func\", function(func, query, ...) {
 	output <- body_text(func)
-	
 	# brews the file output.html in the /views dir
 	render_brew(\"output\",list(header = \"Source\", output = output))
 })
 
-# load_html(\"/\",func_c,\"/interaction\")
+
+
+# load_html(fun_to_url(",func_c,", url = \"/pic/\")
+# View Picture
+router$get(\"/pic/:func\", function(func, query, ...) {
+	output <- body_text(func)
+	
+	if(missing(query))
+		call <- str_c(func, \"()\")
+	else
+		call <- str_c(func, \"(\",str_c(names(query), str_c(\"\\\"\", query, \"\\\"\"), sep = \" = \", collapse = \", \") ,\")\")
+	
+	f <- tempfileWithExtension(\"png\")
+	png(f)
+	  eval(parse(text = call))
+	dev.off()
+	
+	# brews the file output.html in the /views dir
+	static_file(f, remove = TRUE)
+})
+
+
+# load_html(\"/interaction/\",", func_c, ")
 # PLEASE EDIT THE FILE BELOW!!!!
 # View Interactions
 router$get(\"/:func/interaction\", function(func, query, ...) {
 	# brews the file interaction.html in the /views dir
 	render_brew(\"interaction\",list(header = \"Interaction\", output = output))
 })
+
 ", file_path = file_path)
 
 }

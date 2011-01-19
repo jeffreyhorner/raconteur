@@ -56,7 +56,7 @@ valid_directory <- function(name, overwrite) {
 #' @return NULL or source code of of the function
 #' @author Barret Schloerke \email{schloerke@@gmail.con} and Hadley Wickham
 #' @keywords internal
-body_text <- function(func_c) {
+body_text <- function(func_c, html_view=FALSE) {
 	# print(func_c)
 	if(missing(func_c)){
 		stop("Please supply a function name")
@@ -64,6 +64,7 @@ body_text <- function(func_c) {
 	
 	text <- get_function(func_c)
 	
+	# output <- NULL
 	if (is.null(text)) {
 		NULL
 	} else {
@@ -101,7 +102,7 @@ get_function <- function(func_c) {
 #' @param file_path path to file being used
 #' @param append boolen to append file or overwrite file
 print_line <- function(..., file_path, append = TRUE) {
-	cat(..., "\n", file = file_path, append = append)
+	cat(..., "\n", sep = "", file = file_path, append = append)
 }
 
 
@@ -133,4 +134,30 @@ append_vector <- function(vect, val){
 	vect[length(vect) + 1] <- val
 	vect
 }
+
+
+cat_e <- function(...) {
+	cat(..., file=stderr())
+}
+
+
+check_pkg_and_load <- function(...) {
+	pkg <- as_char(...)
+	if (!base::require(pkg, character.only=TRUE)) {
+		utils::install.packages(pkg)
+		base::library(pkg)
+	}
+}
+
+
+eval_text <- function(txt, ...) {
+	if(missing(query))
+		call <- str_c(func, "()")
+	else
+		call <- str_c(func, "(",str_c(names(query), str_c("\"", query, "\""), sep = " = ", collapse = ", ") ,")")
+
+	output <- eval(parse(text = call))
+	
+}
+
 

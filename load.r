@@ -18,5 +18,7 @@ PATH <- dirname(FILE)
 
 lapply(dir(file.path(PATH, "R"), full.name=TRUE), source)
 
-if(tools:::httpdPort == 0L)
+if(tools:::httpdPort == 0L) {
+	# options(help.ports = 8181)
 	tools::startDynamicHelp()
+}

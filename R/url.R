@@ -57,6 +57,7 @@ func_args <- function(...) {
 	
 	args <- list(name = c(), default = c())
 	# go through each argument and append url string
+	# print(list(s = start_paren, c = pos_comma, e = pos_equal, e = end_paren, t = func_body))
 	if ((end_paren - start_paren) > 1) {
 		arg_boundries <- c(start_paren, pos_comma, end_paren)
 		for (i in seq_len(length(arg_boundries) - 1) ) {
@@ -84,6 +85,7 @@ func_args <- function(...) {
 func_to_url <- function(..., url="", unknown = "<obj>") {
 	name <- as_char(...)
 	args <- func_args(...)
+	# print(args)
 	args <- subset(args, name != "...")
 	
 	url_string <- name

@@ -39,6 +39,7 @@ make_view_interaction <- function(path, func_c) {
 	print_line("<body>", file_path = file_path)
 	print_line("	<%= output %>", file_path = file_path)
 	print_line("</body>", file_path = file_path)
-	print_line("</html>", file_path = file_path)
+	print_line("</html>
+	", file_path = file_path)
 	
 }
