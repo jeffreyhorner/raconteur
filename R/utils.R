@@ -151,10 +151,15 @@ check_pkg_and_load <- function(...) {
 
 
 func_string_with_query <- function(func_c, query) {
-	if(missing(query))
+	if (missing(query)) {
 		str_c(func_c, "()")
-	else
-		str_c(func_c, "(",str_c(names(query), str_c(as.vector(query)), sep = " = ", collapse = ", ") ,")")
+	} else {
+		q <-  c()
+		for (i in names(query))
+			q <- append_vector(q, query[[i]])
+
+		str_c(func_c, "(",str_c(names(query), str_c(q), sep = " = ", collapse = ", ") ,")")
+	}
 }
 
 eval_text <- function(txt, ...) {
