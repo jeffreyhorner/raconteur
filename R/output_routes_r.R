@@ -14,8 +14,8 @@ router$get(\"/\", function() {redirect(\"index.html\")})
 
 # View the interaction \"index.html\" page
 router$get(\"/index.html\", function(...) {
-        # brews the file index.html in the /views dir
-        render_brew(\"index\",list(...))
+	# brews the file index.html in the /views dir
+	render_brew(\"index\",list(...))
 })
 
 
@@ -25,9 +25,9 @@ router$get(\"/eval/:func\", function(func, query, ...) {
 	
 	output <- eval(parse(text = func_string_with_query(func_c = func, query = query)))
 	
-	cat(\"output: \", output, file = stderr())
 	# brews the file output.html in the /views dir
-	render_brew(\"output\",list(header = \"Output\", output = output))
+	# render_brew(\"output\",list(header = \"Output\", output = output))
+	raconteur_render_text(output)
 })
 
 
@@ -36,7 +36,8 @@ router$get(\"/eval/:func\", function(func, query, ...) {
 router$get(\"/source/:func\", function(func, query, ...) {
 	output <- body_text(func)
 	# brews the file output.html in the /views dir
-	render_brew(\"output\",list(header = \"Source\", output = output))
+	# render_brew(\"output\",list(header = \"Source\", output = output))
+	raconteur_render_text(output)
 })
 
 
