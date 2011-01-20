@@ -9,7 +9,7 @@ rando_plot <- function(count = 100, ...) {
 		rnorm(count), 
 		main = paste('Cool Random Plot!'), 
 		col = rainbow(count, alpha = runif(100, 0, 1)), 
-		cex = c(2, 3, 4, 5, 10, 50, 100)/10,
+		cex = c(2, 3, 4, 5, 10, 50, 100) / 10,
 		...
 	)
 }

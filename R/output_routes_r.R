@@ -73,7 +73,7 @@ router$get(\"/js/:var_name/:func\", function(var_name, func, query, ...) {
 	output <- eval(parse(text = func_string_with_query(func_c = func, query = query)))
 	
 	# brews the file output.html in the /views dir
-	raconteur_render_javascript(var_name, output)
+	raconteur_render_javascript(var_name, raconteur_toJSON(object))
 })
 
 

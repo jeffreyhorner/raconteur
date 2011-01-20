@@ -35,12 +35,12 @@ raconteur_render_json <- function(object) {
 	sinartra:::render(raconteur_toJSON(object), mime_type = "application/json")
 }
 
-raconteur_render_javascript <- function(var_name, object) {
+raconteur_render_javascript <- function(var_name, json_object) {
 	# Yes, 'text/javascript is "obsolete" according to wikipedia, 
 	# but it has more support than 'application/javascrip'
 	# .... "Defined in RFC 4329 but not accepted in IE 8 or earlier"
 	
-	payday <- str_c("var ", var_name, " = ", raconteur_toJSON(object), ";")
+	payday <- str_c("var ", var_name, " = ", json_object, ";")
 	
 	sinartra:::render(payday, mime_type = "text/javascript")
 }

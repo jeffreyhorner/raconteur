@@ -1,14 +1,29 @@
+find_user_functions <- function(func_c, fun) {
+	
+	if(length(func_c) < 2) {
+		c(func_c, user_functions(fun))
+	} else {
+		d <- func_c
+		inners <- sapply(fun, "user_functions")
+		for(i in seq_along(inners)) {
+			item <- inners[[i]][1]
+			if(length(item) > 0)
+				d <- append_vector(d, inners[[i]][1])
+		}
+		d[!duplicated(d)]
+	}	
+}
+
+
 #' Make Function File
 #' Make a file for the functions to be housed in.
 add_functions_to_routes_r <- function(file_path, func_c, fun) {
 	
 	# Save original function
-	func_body <- body_text(func_c)
-	print_line(func_body, file_path = file_path)
-	
+	inners <- find_user_functions(func_c, fun)
+cat_e(str_c(inners, collapse =", "), "\n")
 	# Add all inner functions to the file
-	innerFunctions <- user_functions(fun)
-	for(innerFunc in innerFunctions) {
+	for(innerFunc in inners) {
 		print_line("\n\n", file_path = file_path)
 		print_line(body_text(innerFunc), file_path = file_path)
 	}
@@ -22,6 +37,7 @@ add_functions_to_routes_r <- function(file_path, func_c, fun) {
 #' @param fun function in question
 #' @examples user_functions(app.skeleton)
 user_functions <- function(fun) {
+	
 	parsed <- c()
 	if(is.character(fun)) {
 		if(!is.null(get_function(fun))) 

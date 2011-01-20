@@ -50,11 +50,7 @@ app.skeleton <- function(func, dir_name, overwrite = TRUE) {
 	make_routes_r(routes_path, first_func)
 
 	# Save functions to file	
-	for(i in seq_along(func_c)) {
-		print(func_c[i])
-		add_functions_to_routes_r(routes_path, func_c[[i]], func[[i]])
-	}
-
+	add_functions_to_routes_r(routes_path, func_c, func)
 	
 	# Create the views dir
 	make_app_dir(file.path(base_dir, "views"))
