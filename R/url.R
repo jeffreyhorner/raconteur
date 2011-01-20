@@ -70,7 +70,7 @@ func_args <- function(...) {
 				args$default[i] <- cut_and_trim_string(func_body, eq+1, end - 2)
 			} else {
 				args$name[i] <- cut_and_trim_string(func_body, start, end - 2)
-				args$default[i] <- NULL
+				args$default[i] <- NA
 			}
 		}
 	}
@@ -85,9 +85,8 @@ func_args <- function(...) {
 func_to_url <- function(..., url="", unknown = "<obj>") {
 	name <- as_char(...)
 	args <- func_args(...)
-	# print(args)
 	args <- subset(args, name != "...")
-	
+		
 	url_string <- name
 	if(NROW(args) < 1){
 		return(url_string)
