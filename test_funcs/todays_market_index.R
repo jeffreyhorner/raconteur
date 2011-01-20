@@ -1,6 +1,6 @@
 # setwd("inst")
 # source("../load.r")
-# source("../test_funcs/index_try.R")
+# source("../test_funcs/todays_market_index.R")
 # app.skeleton(todays_market_index)
 
 # "http://gp2.metamx.com:8080/squrl/v1.1/openx/query/2011-01-01T00:00:00Z_2011-01-01T23:59:59Z;;[[%22sold-impressions%22%20%28hourly%20+%20sold-impressions%29]%20[%22price%22%20%28hourly%20+%20price%29]%20[%22impressions%22%20%28hourly%20+%20impressions%29]]?callback=var%20timeseries_data="
@@ -56,7 +56,7 @@ total_revenue_for_dates <- function(...) {
 pad_beg_w_zero <- function(x) {
 	while(stringr::str_length(x) < 2)
 		x <- stringr::str_c("0", x, collapse = "")
-
+		
 	x
 }
 
@@ -84,5 +84,5 @@ todays_market_index <- function(startDateString = "2011-01-01", startDateEndStri
 		
 	
 	ratio <- end_sum / start_sum
-	100 * signif(ratio, 4)
+	100 * signif(ratio, 5)
 }
