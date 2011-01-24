@@ -174,3 +174,11 @@ eval_func_with_query <- function(func_c, query = c(), ...) {
 	eval_text(txt = func_string_with_query(func_c = func_c, query = query), ...)
 }
 
+pad_beg_w_zero <- function(x) {
+	while(stringr::str_length(x) < 2)
+		x <- stringr::str_c("0", x, collapse = "")
+		
+	x
+}
+
+
