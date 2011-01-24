@@ -143,23 +143,27 @@ cat_e <- function(...) {
 
 check_pkg_and_load <- function(...) {
 	pkg <- as_char(...)
-	if (!base::require(pkg, character.only=TRUE)) {
+	if (!base::require(pkg, character.only = TRUE)) {
 		utils::install.packages(pkg)
-		base::library(pkg)
+		base::library(pkg, character.only = TRUE)
 	}
 }
 
 
 func_string_with_query <- function(func_c, query) {
+	txt <- NULL
 	if (missing(query)) {
-		str_c(func_c, "()")
+		txt <- str_c(func_c, "()")
 	} else {
 		q <-  c()
 		for (i in names(query))
 			q <- append_vector(q, query[[i]])
 
-		str_c(func_c, "(",str_c(names(query), str_c(q), sep = " = ", collapse = ", ") ,")")
+		txt <- str_c(func_c, "(",str_c(names(query), str_c(q), sep = " = ", collapse = ", ") ,")")
 	}
+	
+	cat_e("calling: ", txt, "\n")
+	txt
 }
 
 # eval_text <- function(txt, ...) {
@@ -169,4 +173,12 @@ func_string_with_query <- function(func_c, query) {
 eval_func_with_query <- function(func_c, query = c(), ...) {
 	eval_text(txt = func_string_with_query(func_c = func_c, query = query), ...)
 }
+
+pad_beg_w_zero <- function(x) {
+	while(stringr::str_length(x) < 2)
+		x <- stringr::str_c("0", x, collapse = "")
+		
+	x
+}
+
 

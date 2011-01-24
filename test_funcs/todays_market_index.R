@@ -57,12 +57,6 @@ total_revenue_for_dates <- function(...) {
 	index_date_matrix$revenue[[1]]
 }
 
-pad_beg_w_zero <- function(x) {
-	while(stringr::str_length(x) < 2)
-		x <- stringr::str_c("0", x, collapse = "")
-		
-	x
-}
 
 make_date <- function(obj) {
 	stringr::str_c(year(obj), month(obj), day(obj), sep = "-", collapse = "")

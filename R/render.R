@@ -34,6 +34,11 @@ raconteur_toJSON <- function(object) {
 raconteur_render_json <- function(object) {
 	sinartra:::render(raconteur_toJSON(object), mime_type = "application/json")
 }
+# Convenience function to render an R object to text
+raconteur_render_text <- function(object) {
+	txt <- str_c(capture.output(object), collapse = "\n")
+	sinartra:::render(txt, mime_type = "text/plain")
+}
 
 raconteur_render_javascript <- function(var_name, json_object) {
 	# Yes, 'text/javascript is "obsolete" according to wikipedia, 
