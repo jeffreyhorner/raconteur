@@ -1,31 +1,31 @@
 rApache_root_url <- function(){
-	if (!is.null(getOption('raconteur.root_url')))
-		getOption('raconteur.root_url')
+    if (!is.null(getOption('raconteur.root_url')))
+	getOption('raconteur.root_url')
 	else if (SERVER$path_info == '')
-		SERVER$uri
+	SERVER$uri
 	else 
-		sub(paste(SERVER$path_info,'$',sep=''),'',SERVER$uri)
+	    sub(paste(SERVER$path_info,'$',sep=''),'',SERVER$uri)
 }
 
 rApache_app_url <- function(app) paste(rApache_root_url(),app,sep='/')
 
 rApache_splash_screen <- function(msg=NULL){
-	setContentType('text/html')
-	if (!is.null(msg)) cat(msg)
+    setContentType('text/html')
+    if (!is.null(msg)) cat(msg)
 
-	any_paths <- NULL
-	lapply(getOption('raconteur.app_path'),
-		function(p){
-			if (is.null(any_paths)){
-				cat("<h2>Try one of these apps</h2>")
-				any_paths <<- TRUE
-			}
-			for (i in dir(p)){
-				cat(sprintf('<a href="%s/">%s</a><br>\n',rApache_app_url(i),i))
-			}
-		}
+    any_paths <- NULL
+    lapply(getOption('raconteur.app_path'),
+	function(p){
+	    if (is.null(any_paths)){
+		cat("<h2>Try one of these apps</h2>")
+		any_paths <<- TRUE
+	    }
+	    for (i in dir(p)){
+		cat(sprintf('<a href="%s/">%s</a><br>\n',rApache_app_url(i),i))
+	    }
+	}
 	)
-	return(OK)
+    return(OK)
 }
 
 rApache_appcache <- list()
@@ -105,64 +105,64 @@ rApache_handler <- function(){
 
 rApache_admin_app <- NULL
 rApache_admin_handler <- function(){
-	app <- getOption('raconteur.admin_app')
-	if (!is_raconteur_app(app))
-		return(HTTP_BAD_REQUEST)
+    app <- getOption('raconteur.admin_app')
+    if (!is_raconteur_app(app))
+	return(HTTP_BAD_REQUEST)
 
-	# lame that we have to do this
-	rapache::reset_magic_vars()
+    # lame that we have to do this
+    rapache::reset_magic_vars()
 
-	if (is.null(rApache_admin_app))
-		rApache_admin_app <<- create_cached_app(app)
-	app <- rApache_admin_app
+    if (is.null(rApache_admin_app))
+	rApache_admin_app <<- create_cached_app(app)
+    app <- rApache_admin_app
 
-	oldwd <- setwd(app$path)
-	on.exit(setwd(oldwd))
+    oldwd <- setwd(app$path)
+    on.exit(setwd(oldwd))
 
-	mtime = as.integer(file.info(app$routefile)$mtime)
-	if (mtime > app$routefile_mtime){
-		sys.source(app$routefile,app)
-		app$routefile_mtime <- mtime
-		rApache_admin_app <<- app
+    mtime = as.integer(file.info(app$routefile)$mtime)
+    if (mtime > app$routefile_mtime){
+	sys.source(app$routefile,app)
+	app$routefile_mtime <- mtime
+	rApache_admin_app <<- app
+    }
+
+    # Trim /appname from path_info
+    cat("appname",app$appname,file=stderr())
+    cat('path_info',SERVER$path_info,'\n',file=stderr())
+    sinartra_route <- sub(paste('/',app$appname,sep=''),'',SERVER$path_info)
+    cat('route',sinartra_route,'\n',file=stderr())
+
+    # Execute route and capture all leaky output to a textConnection
+    con <- textConnection('.captured_output',open='w')
+    sink(con)
+    ret <- app$router$route(sinartra_route, GET)
+    sink()
+    close(con)
+
+    if (is.list(ret)){
+	# Translate Rhttpd response object to rApache response
+	setContentType(ret[['content-type']])
+	if (!is.null(ret$headers)){
+	    lapply(strsplit(ret$headers,': '),function(i) setHeader(i[1],i[2]))
 	}
-
-	# Trim /appname from path_info
-	cat("appname",app$appname,file=stderr())
-	cat('path_info',SERVER$path_info,'\n',file=stderr())
-	sinartra_route <- sub(paste('/',app$appname,sep=''),'',SERVER$path_info)
-	cat('route',sinartra_route,'\n',file=stderr())
-
-	# Execute route and capture all leaky output to a textConnection
-	con <- textConnection('.captured_output',open='w')
-	sink(con)
-	ret <- app$router$route(sinartra_route, GET)
-	sink()
-	close(con)
-
-	if (is.list(ret)){
-		# Translate Rhttpd response object to rApache response
-		setContentType(ret[['content-type']])
-		if (!is.null(ret$headers)){
-			lapply(strsplit(ret$headers,': '),function(i) setHeader(i[1],i[2]))
-		}
-		if ('file' %in% names(ret)){
-			# payload is a file
-			sendBin(readBin(ret$file,'raw',n=file.info(ret$file)$size))
-		} else{
-			capture.output(str(ret),file=stderr())
-			if (is.character(ret[[1]]))
-				cat(ret[[1]])
-			else if (is.raw(ret[[1]]))
-				sendBin(ret[[1]])
-		}
-		if (ret[['status code']] == 200)
-			return(OK)
-		else 
-			return(ret[['status code']])
-	} else {
-		# rApache response
-		if (length(.captured_output)>0)
-			cat(paste(paste(.captured_output,collapse="\n"),"\n",sep=""))
-		return(ret)
+	if ('file' %in% names(ret)){
+	    # payload is a file
+	    sendBin(readBin(ret$file,'raw',n=file.info(ret$file)$size))
+	} else{
+	    capture.output(str(ret),file=stderr())
+	    if (is.character(ret[[1]]))
+		cat(ret[[1]])
+	    else if (is.raw(ret[[1]]))
+	    sendBin(ret[[1]])
 	}
+	if (ret[['status code']] == 200)
+	    return(OK)
+	else 
+	    return(ret[['status code']])
+    } else {
+	# rApache response
+	if (length(.captured_output)>0)
+	    cat(paste(paste(.captured_output,collapse="\n"),"\n",sep=""))
+	    return(ret)
+    }
 }
