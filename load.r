@@ -1,4 +1,4 @@
-library(RJSONIO)
+library(rjson)
 library(RCurl)
 library(tools)
 library(parser)
